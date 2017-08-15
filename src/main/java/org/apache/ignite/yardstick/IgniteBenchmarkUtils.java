@@ -123,7 +123,7 @@ public class IgniteBenchmarkUtils {
 
         final int range = 100_000;
 
-        final boolean throughputLatencyProbe = false;
+        final boolean throughputLatencyProbe = true;
 
         for (int i = 0; i < extraNodes; i++) {
             IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
