@@ -68,6 +68,7 @@ public class IgniteBenchmarkUtils {
         // No-op.
     }
 
+
     /**
      * @param igniteTx Ignite transaction.
      * @param txConcurrency Transaction concurrency.
