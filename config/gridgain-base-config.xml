@@ -43,13 +43,13 @@
 
         <property name="indexingSpi">
             <list>
-                <bean class="org.gridgain.grid.spi.indexing.h2.GridH2IndexingSpi">
-                    <property name="name" value="offheap"/>
-                    <property name="maxOffHeapMemory" value="#{500*1024*1024}"/>
-                </bean>
-                <bean class="org.gridgain.grid.spi.indexing.h2.GridH2IndexingSpi">
-                    <property name="name" value="default"/>
-                </bean>
+                <!--<bean class="org.gridgain.grid.spi.indexing.h2.GridH2IndexingSpi">-->
+                    <!--<property name="name" value="offheap"/>-->
+                    <!--<property name="maxOffHeapMemory" value="#{500*1024*1024}"/>-->
+                <!--</bean>-->
+                <!--<bean class="org.gridgain.grid.spi.indexing.h2.GridH2IndexingSpi">-->
+                    <!--<property name="name" value="default"/>-->
+                <!--</bean>-->
             </list>
         </property>
 

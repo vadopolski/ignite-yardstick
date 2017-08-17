@@ -27,6 +27,7 @@ import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriver;
 import org.yardstickframework.BenchmarkDriverStartUp;
 import org.yardstickframework.BenchmarkUtils;
+import org.yardstickframework.gridgain.cache.GridGainPutBenchmark;
 import org.yardstickframework.gridgain.cache.GridGainPutGetBenchmark;
 
 import javax.cache.CacheException;
@@ -104,7 +105,7 @@ public class GridGainBenchmarkUtils {
     public static void main(String[] args) throws Exception {
         final String cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
 
-        final Class<? extends BenchmarkDriver> benchmark = GridGainPutGetBenchmark.class;
+        final Class<? extends BenchmarkDriver> benchmark = GridGainPutBenchmark.class;
 
         final int threads = 1;
 
@@ -120,19 +121,17 @@ public class GridGainBenchmarkUtils {
         final boolean throughputLatencyProbe = true;
 
         for (int i = 0; i < extraNodes; i++) {
-            IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
-
-            nodeCfg.setIgniteInstanceName("node-" + i);
-            nodeCfg.setMetricsLogFrequency(0);
-
-            Ignition.start(nodeCfg);
+//            IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
+//
+//            nodeCfg.setIgniteInstanceName("node-" + i);
+//            nodeCfg.setMetricsLogFrequency(0);
+//
+//            Ignition.start(nodeCfg);
         }
 
         ArrayList<String> args0 = new ArrayList<>();
 
 //        CONFIGS="-b 1 -sm PRIMARY_SYNC -dn GridGainPutBenchmark -sn GridGainNode"
-
-
 
         addArg(args0, "-t", threads);
         addArg(args0, "-w", warmUp);
