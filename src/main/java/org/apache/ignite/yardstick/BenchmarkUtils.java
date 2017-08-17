@@ -17,29 +17,27 @@
 
 package org.apache.ignite.yardstick;
 
+import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteTransactions;
-import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterTopologyException;
-import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.internal.util.typedef.G;
 import org.apache.ignite.transactions.*;
 import org.apache.ignite.yardstick.cache.IgnitePutGetBenchmark;
-import org.yardstickframework.*;
-import org.yardstickframework.BenchmarkUtils;
-import org.yardstickframework.gridgain.GridGainAbstractBenchmark;
-import org.yardstickframework.gridgain.cache.*;
-import org.yardstickframework.gridgain.compute.GridGainAffinityCallBenchmark;
-import org.yardstickframework.gridgain.compute.GridGainApplyBenchmark;
+import org.yardstickframework.BenchmarkConfiguration;
+import org.yardstickframework.BenchmarkDriver;
+import org.yardstickframework.BenchmarkDriverStartUp;
+import org.yardstickframework.gridgain.cache.GridGainPutBenchmark;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
 /**
  * Utils.
  */
-public class GridGainBenchmarkUtils {
+public class BenchmarkUtils {
     /**
      * Scheduler executor.
      */
@@ -57,7 +55,7 @@ public class GridGainBenchmarkUtils {
     /**
      * Utility class constructor.
      */
-    private GridGainBenchmarkUtils() {
+    private BenchmarkUtils() {
         // No-op.
     }
 
@@ -104,9 +102,12 @@ public class GridGainBenchmarkUtils {
      * @throws Exception If failed.
      */
     public static void main(String[] args) throws Exception {
-        final String cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
 
-        final Class<? extends BenchmarkDriver> benchmark = GridGainPutGetBenchmark.class;
+        String cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
+
+        Class<? extends BenchmarkDriver> benchmark = GridGainPutBenchmark.class;
+
+        String nodeName = "GridGainNode";
 
         final int threads = 1;
 
@@ -121,18 +122,25 @@ public class GridGainBenchmarkUtils {
 
         final boolean throughputLatencyProbe = true;
 
-        for (int i = 0; i < extraNodes; i++) {
-//            IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
-//
-//            nodeCfg.setIgniteInstanceName("node-" + i);
-//            nodeCfg.setMetricsLogFrequency(0);
-//
-//            Ignition.start(nodeCfg);
-        }
+        benchmarkDriverStartUp(cfg, benchmark, nodeName, threads, clientDriverNode, extraNodes, warmUp,
+                duration, range, throughputLatencyProbe);
 
+        stopAllGrids();
+
+        cfg = "modules/yardstick/config/ignite-localhost-config.xml";
+
+        benchmark = IgnitePutGetBenchmark.class;
+
+        nodeName = "IgniteNode";
+
+        benchmarkDriverStartUp(cfg, benchmark, nodeName, threads, clientDriverNode, extraNodes, warmUp,
+                duration, range, throughputLatencyProbe);
+    }
+
+    private static void benchmarkDriverStartUp(String cfg, Class<? extends BenchmarkDriver> benchmark, String nodeName,
+                                               int threads, boolean clientDriverNode, int extraNodes, int warmUp, int duration,
+                                               int range, boolean throughputLatencyProbe) throws Exception {
         ArrayList<String> args0 = new ArrayList<>();
-
-//        CONFIGS="-b 1 -sm PRIMARY_SYNC -dn GridGainPutBenchmark -sn GridGainNode"
 
         addArg(args0, "-t", threads);
         addArg(args0, "-w", warmUp);
@@ -142,15 +150,6 @@ public class GridGainBenchmarkUtils {
         addArg(args0, "-sn", "GridGainNode");
         addArg(args0, "-ggcfg", cfg);
         addArg(args0, "-wom", "PRIMARY");
-
-//        addArg(args0, "-t", threads);
-//        addArg(args0, "-w", warmUp);
-//        addArg(args0, "-d", duration);
-//        addArg(args0, "-r", range);
-//        addArg(args0, "-dn", benchmark.getSimpleName());
-//        addArg(args0, "-sn", "IgniteNode");
-//        addArg(args0, "-cfg", cfg);
-//        addArg(args0, "-wom", "PRIMARY");
 
         if (throughputLatencyProbe)
             addArg(args0, "-pr", "ThroughputLatencyProbe");
@@ -185,7 +184,7 @@ public class GridGainBenchmarkUtils {
 
         lgr.setFuture(fut);
 
-        BenchmarkUtils.println(cfg, "Preload logger was started.");
+        org.yardstickframework.BenchmarkUtils.println(cfg, "Preload logger was started.");
 
         return lgr;
     }
