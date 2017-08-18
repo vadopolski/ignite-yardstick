@@ -27,8 +27,7 @@ import org.yardstickframework.*;
 import org.yardstickframework.BenchmarkUtils;
 import org.yardstickframework.gridgain.GridGainAbstractBenchmark;
 import org.yardstickframework.gridgain.cache.*;
-import org.yardstickframework.gridgain.compute.GridGainAffinityCallBenchmark;
-import org.yardstickframework.gridgain.compute.GridGainApplyBenchmark;
+import org.yardstickframework.gridgain.compute.*;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
@@ -105,7 +104,7 @@ public class GridGainBenchmarkUtils {
     public static void main(String[] args) throws Exception {
         final String cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
 
-        final Class<? extends BenchmarkDriver> benchmark = GridGainPutGetBenchmark.class;
+        final Class<? extends BenchmarkDriver> benchmark = GridGainRunBenchmark.class;
 
         final int threads = 1;
 
