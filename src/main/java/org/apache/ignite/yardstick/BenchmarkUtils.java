@@ -27,6 +27,8 @@ import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriver;
 import org.yardstickframework.BenchmarkDriverStartUp;
 import org.yardstickframework.gridgain.cache.GridGainPutBenchmark;
+import org.yardstickframework.gridgain.cache.GridGainPutGetBenchmark;
+import org.yardstickframework.report.jfreechart.JFreeChartGraphPlotter;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
@@ -38,6 +40,20 @@ import java.util.concurrent.*;
  * Utils.
  */
 public class BenchmarkUtils {
+
+    /** */
+    private static String cfg;
+
+    /** */
+    private static Class<? extends BenchmarkDriver> benchmark;
+
+    /** */
+    private static String nodeName;
+
+    /** */
+    private static List<Class<? extends BenchmarkDriver>> benchmarks = new ArrayList<>();
+
+
     /**
      * Scheduler executor.
      */
@@ -58,7 +74,6 @@ public class BenchmarkUtils {
     private BenchmarkUtils() {
         // No-op.
     }
-
 
     /**
      * @param igniteTx Ignite transaction.
@@ -103,38 +118,27 @@ public class BenchmarkUtils {
      */
     public static void main(String[] args) throws Exception {
 
-        String cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
+        cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\gridgain-localhost-config.xml";
+        nodeName = "GridGainNode";
+        benchmarks.add(GridGainPutBenchmark.class);
+        benchmarks.add(GridGainPutGetBenchmark.class);
 
-        Class<? extends BenchmarkDriver> benchmark = GridGainPutBenchmark.class;
-
-        String nodeName = "GridGainNode";
+//        cfg = "c:\\yard\\ignite\\modules\\yardstick\\config\\ignite-localhost-config.xml";
+//        nodeName = "IgniteNode";
+//        benchmarks.add(IgnitePutGetBenchmark.class);
 
         final int threads = 1;
-
         final boolean clientDriverNode = true;
-
         final int extraNodes = 1;
-
         final int warmUp = 60;
         final int duration = 120;
-
         final int range = 100_000;
-
         final boolean throughputLatencyProbe = true;
 
-        benchmarkDriverStartUp(cfg, benchmark, nodeName, threads, clientDriverNode, extraNodes, warmUp,
-                duration, range, throughputLatencyProbe);
-
-        stopAllGrids();
-
-        cfg = "modules/yardstick/config/ignite-localhost-config.xml";
-
-        benchmark = IgnitePutGetBenchmark.class;
-
-        nodeName = "IgniteNode";
-
-        benchmarkDriverStartUp(cfg, benchmark, nodeName, threads, clientDriverNode, extraNodes, warmUp,
-                duration, range, throughputLatencyProbe);
+        for (Class<? extends BenchmarkDriver> bench : benchmarks) {
+            benchmarkDriverStartUp(cfg, bench, nodeName, threads, clientDriverNode, extraNodes, warmUp,
+                    duration, range, throughputLatencyProbe);
+        }
     }
 
     private static void benchmarkDriverStartUp(String cfg, Class<? extends BenchmarkDriver> benchmark, String nodeName,
@@ -147,7 +151,7 @@ public class BenchmarkUtils {
         addArg(args0, "-d", duration);
         addArg(args0, "-r", range);
         addArg(args0, "-dn", benchmark.getSimpleName());
-        addArg(args0, "-sn", "GridGainNode");
+        addArg(args0, "-sn", nodeName);
         addArg(args0, "-ggcfg", cfg);
         addArg(args0, "-wom", "PRIMARY");
 
@@ -156,8 +160,17 @@ public class BenchmarkUtils {
 
         if (clientDriverNode)
             args0.add("-cl");
+//
+//        BenchmarkDriverStartUp.main(args0.toArray(new String[args0.size()]));
 
-        BenchmarkDriverStartUp.main(args0.toArray(new String[args0.size()]));
+        ArrayList<String> args1 = new ArrayList<>();
+
+//        addArg(args1, "-gm", "STANDARD");
+        addArg(args1, "-gm", "COMPOUND");
+        addArg(args1, "-i", "res1");
+        addArg(args1, "-i", "res2");
+
+        JFreeChartGraphPlotter.main(args1.toArray(new String[args1.size()]));
     }
 
     /**

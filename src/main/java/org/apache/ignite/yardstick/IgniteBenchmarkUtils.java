@@ -18,6 +18,7 @@
 package org.apache.ignite.yardstick;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
@@ -68,7 +69,6 @@ public class IgniteBenchmarkUtils {
         // No-op.
     }
 
-
     /**
      * @param igniteTx Ignite transaction.
      * @param txConcurrency Transaction concurrency.
@@ -113,7 +113,7 @@ public class IgniteBenchmarkUtils {
     public static void main(String[] args) throws Exception {
         final String cfg = "modules/yardstick/config/ignite-localhost-config.xml";
 
-        final Class<? extends BenchmarkDriver> benchmark = IgnitePutGetBenchmark.class;
+        final Class<? extends BenchmarkDriver> benchmark = IgnitePutBenchmark.class;
 
         final int threads = 1;
 

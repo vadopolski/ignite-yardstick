@@ -61,7 +61,6 @@ public class GridGainBenchmarkUtils {
         // No-op.
     }
 
-
     /**
      * @param igniteTx Ignite transaction.
      * @param txConcurrency Transaction concurrency.
@@ -121,18 +120,7 @@ public class GridGainBenchmarkUtils {
 
         final boolean throughputLatencyProbe = true;
 
-        for (int i = 0; i < extraNodes; i++) {
-//            IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
-//
-//            nodeCfg.setIgniteInstanceName("node-" + i);
-//            nodeCfg.setMetricsLogFrequency(0);
-//
-//            Ignition.start(nodeCfg);
-        }
-
         ArrayList<String> args0 = new ArrayList<>();
-
-//        CONFIGS="-b 1 -sm PRIMARY_SYNC -dn GridGainPutBenchmark -sn GridGainNode"
 
         addArg(args0, "-t", threads);
         addArg(args0, "-w", warmUp);
@@ -142,15 +130,6 @@ public class GridGainBenchmarkUtils {
         addArg(args0, "-sn", "GridGainNode");
         addArg(args0, "-ggcfg", cfg);
         addArg(args0, "-wom", "PRIMARY");
-
-//        addArg(args0, "-t", threads);
-//        addArg(args0, "-w", warmUp);
-//        addArg(args0, "-d", duration);
-//        addArg(args0, "-r", range);
-//        addArg(args0, "-dn", benchmark.getSimpleName());
-//        addArg(args0, "-sn", "IgniteNode");
-//        addArg(args0, "-cfg", cfg);
-//        addArg(args0, "-wom", "PRIMARY");
 
         if (throughputLatencyProbe)
             addArg(args0, "-pr", "ThroughputLatencyProbe");
