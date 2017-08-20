@@ -17,23 +17,19 @@
 
 package org.apache.ignite.yardstick;
 
-import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteTransactions;
+import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterTopologyException;
-import org.apache.ignite.internal.util.typedef.G;
+import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.transactions.*;
-import org.apache.ignite.yardstick.cache.*;
-import org.apache.ignite.yardstick.compute.*;
+import org.apache.ignite.yardstick.cache.IgnitePutBenchmark;
 import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriver;
 import org.yardstickframework.BenchmarkDriverStartUp;
-import org.yardstickframework.gridgain.cache.*;
-import org.yardstickframework.gridgain.compute.*;
-import org.yardstickframework.report.jfreechart.JFreeChartGraphPlotter;
+import org.yardstickframework.gridgain.cache.GridGainPutBenchmark;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -80,6 +76,8 @@ public class BenchmarkUtils {
 
     /** */
     private static final int RANGE = 100_000;
+
+
 
     /** */
     private static final boolean THROUGHPUT_LATENCY_PROBE = true;
@@ -164,9 +162,7 @@ public class BenchmarkUtils {
 //        gridGainBenchmarks.add(GridGainExecuteBenchmark.class);
 //        gridGainBenchmarks.add(GridGainRunBenchmark.class);
 
-        for (Class<? extends BenchmarkDriver> benchmark : gridGainBenchmarks) {
-            benchmarkDriverStartUp(GRID_GAIN_CFG, benchmark, GRID_GAIN_NODE_NAME);
-        }
+        benchmarkDriverStartUp("-ggcfg", GRID_GAIN_CFG, "GridGainPutBenchmark,GridGainPutGetBenchmark", GRID_GAIN_NODE_NAME);
 
         igniteBenchmarks.add(IgnitePutBenchmark.class);
 //        igniteBenchmarks.add(IgnitePutGetBenchmark.class);
@@ -181,39 +177,51 @@ public class BenchmarkUtils {
 //        igniteBenchmarks.add(IgniteExecuteBenchmark.class);
 //        igniteBenchmarks.add(IgniteRunBenchmark.class);
 
+          benchmarkDriverStartUp("-cfg", IGNITE_CFG, "IgnitePutBenchmark,IgnitePutGetBenchmark", IGNITE_NODE_NAME);
+
         jFreeChartGraphPlotter();
     }
 
-    public static void benchmarkDriverStartUp(String cfg, Class<? extends BenchmarkDriver> benchmark, String nodeName)
+    public static void benchmarkDriverStartUp(String cfgParameter, String cfg, String benchmarks, String nodeName)
             throws Exception {
-        ArrayList<String> args0 = new ArrayList<>();
 
-        addArg(args0, "-t", THREADS);
-        addArg(args0, "-w", WARM_UP);
-        addArg(args0, "-d", DURATION);
-        addArg(args0, "-r", RANGE);
-        addArg(args0, "-dn", benchmark.getSimpleName());
-        addArg(args0, "-sn", nodeName);
-        addArg(args0, "-ggcfg", cfg);
-        addArg(args0, "-wom", "PRIMARY");
+            IgniteConfiguration nodeCfg = Ignition.loadSpringBean(cfg, "grid.cfg");
 
-        if (THROUGHPUT_LATENCY_PROBE)
-            addArg(args0, "-pr", "ThroughputLatencyProbe");
+            nodeCfg.setIgniteInstanceName("node-0");
+            nodeCfg.setMetricsLogFrequency(0);
 
-        if (CLIENT_DRIVER_NODE)
-            args0.add("-cl");
+            Ignition.start(nodeCfg);
 
-        BenchmarkDriverStartUp.main(args0.toArray(new String[args0.size()]));
+//        for (Class<? extends BenchmarkDriver> benchmark : benchmarks) {
+            ArrayList<String> args0 = new ArrayList<>();
+
+            addArg(args0, "-t", THREADS);
+            addArg(args0, "-w", WARM_UP);
+            addArg(args0, "-d", DURATION);
+            addArg(args0, "-r", RANGE);
+            addArg(args0, "-dn", benchmarks);
+            addArg(args0, "-sn", nodeName);
+            addArg(args0, cfgParameter, cfg);
+            addArg(args0, "-wom", "PRIMARY");
+
+            if (THROUGHPUT_LATENCY_PROBE)
+                addArg(args0, "-pr", "ThroughputLatencyProbe");
+
+            if (CLIENT_DRIVER_NODE)
+                args0.add("-cl");
+
+            BenchmarkDriverStartUp.main(args0.toArray(new String[args0.size()]));
+//        }
     }
 
     public static void jFreeChartGraphPlotter () {
         ArrayList<String> args1 = new ArrayList<>();
 
         addArg(args1, "-gm", GRAPH_PLOTTER_TYPE);
-        addArg(args1, "-i", FOLDER_NAMES[0]);
-        addArg(args1, "-i", FOLDER_NAMES[1]);
+        addArg(args1, "-i", "20170820-095054-GridGainPutBenchmark-GridGainPutGetBenchmark");
+        addArg(args1, "-i", "20170820-103822-IgnitePutBenchmark-IgnitePutGetBenchmark");
 
-        JFreeChartGraphPlotter.main(args1.toArray(new String[args1.size()]));
+        JFreeChartGraphPlotterBenchmark.main(args1.toArray(new String[args1.size()]));
     }
 
     /**

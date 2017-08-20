@@ -18,20 +18,16 @@
 package org.apache.ignite.yardstick;
 
 import org.apache.ignite.IgniteTransactions;
-import org.apache.ignite.Ignition;
 import org.apache.ignite.cluster.ClusterTopologyException;
-import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.transactions.*;
-import org.apache.ignite.yardstick.cache.IgnitePutGetBenchmark;
-import org.yardstickframework.*;
+import org.yardstickframework.BenchmarkConfiguration;
+import org.yardstickframework.BenchmarkDriver;
+import org.yardstickframework.BenchmarkDriverStartUp;
 import org.yardstickframework.BenchmarkUtils;
-import org.yardstickframework.gridgain.GridGainAbstractBenchmark;
-import org.yardstickframework.gridgain.cache.*;
-import org.yardstickframework.gridgain.compute.*;
+import org.yardstickframework.gridgain.compute.GridGainRunBenchmark;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
@@ -118,6 +114,8 @@ public class GridGainBenchmarkUtils {
         final int range = 100_000;
 
         final boolean throughputLatencyProbe = true;
+
+
 
         ArrayList<String> args0 = new ArrayList<>();
 
