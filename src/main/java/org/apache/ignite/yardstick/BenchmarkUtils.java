@@ -26,7 +26,6 @@ import org.apache.ignite.yardstick.cache.IgnitePutBenchmark;
 import org.yardstickframework.BenchmarkConfiguration;
 import org.yardstickframework.BenchmarkDriver;
 import org.yardstickframework.BenchmarkDriverStartUp;
-import org.yardstickframework.gridgain.cache.GridGainPutBenchmark;
 
 import javax.cache.CacheException;
 import java.util.ArrayList;
@@ -149,7 +148,9 @@ public class BenchmarkUtils {
      */
     public static void main(String[] args) throws Exception {
 
-        gridGainBenchmarks.add(GridGainPutBenchmark.class);
+        String gridGainBenchmarks = "GridGainPutBenchmark,GridGainPutGetBenchmark";
+
+        gridGainBenchmarks.concat("oridGainPutBenchmark");
 //        gridGainBenchmarks.add(GridGainPutGetBenchmark.class);
 //        gridGainBenchmarks.add(GridGainPutTxBenchmark.class);
 //        gridGainBenchmarks.add(GridGainPutGetTxBenchmark.class);
@@ -162,7 +163,7 @@ public class BenchmarkUtils {
 //        gridGainBenchmarks.add(GridGainExecuteBenchmark.class);
 //        gridGainBenchmarks.add(GridGainRunBenchmark.class);
 
-        benchmarkDriverStartUp("-ggcfg", GRID_GAIN_CFG, "GridGainPutBenchmark,GridGainPutGetBenchmark", GRID_GAIN_NODE_NAME);
+        benchmarkDriverStartUp("-ggcfg", GRID_GAIN_CFG, gridGainBenchmarks, GRID_GAIN_NODE_NAME);
 
         igniteBenchmarks.add(IgnitePutBenchmark.class);
 //        igniteBenchmarks.add(IgnitePutGetBenchmark.class);
